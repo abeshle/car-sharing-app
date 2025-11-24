@@ -1,0 +1,42 @@
+services:
+  mysqldb:
+    platform: linux/arm64
+    image: mysql:8.1
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    ports:
+      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  app:
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    restart: on-failure
+    image: car-sharing-app
+    build: .
+    env_file: ./.env
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+      - $DEBUG_PORT:$DEBUG_PORT
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:$MYSQL_DOCKER_PORT/$MYSQL_DATABASE
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: $MYSQL_ROOT_PASSWORD
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      STRIPE_SECRET_KEY: $STRIPE_SECRET_KEY
+      TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
+      TELEGRAM_CHAT_ID: $TELEGRAM_CHAT_ID
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+volumes:
+    mysql_data:

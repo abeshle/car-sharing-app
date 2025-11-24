@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-manager-user
+      author: abeshle
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "manager@example.com"
+              - column:
+                  name: first_name
+                  value: "John"
+              - column:
+                  name: last_name
+                  value: "McDonald"
+              - column:
+                  name: password
+                  value: "$2b$10$HOdN5qYqvgPpaS2Rz5DBweVkXhjUvBtpJhXsOluY6s0OOJUcppaM2"
+              - column:
+                  name: role
+                  value: "ROLE_MANAGER"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
