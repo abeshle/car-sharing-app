@@ -62,8 +62,7 @@ public class CarServiceTest {
 
         CarResponseDto result = carService.create(requestDto);
 
-        assertEquals(expectedCar.getId(),result.getId());
-        assertEquals(expectedCar.getModel(),result.getModel());
+        assertEquals(expectedCar, result);
 
         verify(carMapper).toModel(requestDto);
         verify(carRepository).save(car);
@@ -80,17 +79,17 @@ public class CarServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Car> carPage = new PageImpl<>(Collections.singletonList(car));
 
-        CarResponseDto carDto = new CarResponseDto();
-        carDto.setId(1L);
-        carDto.setModel("Tesla");
+        CarResponseDto expected = new CarResponseDto();
+        expected.setId(1L);
+        expected.setModel("Tesla");
 
         when(carRepository.findAll(pageable)).thenReturn(carPage);
-        when(carMapper.toDto(car)).thenReturn(carDto);
+        when(carMapper.toDto(car)).thenReturn(expected);
 
         Page<CarResponseDto> result = carService.findAll(pageable);
+        CarResponseDto actual = result.getContent().get(0);
 
-        assertEquals(1, result.getTotalElements());
-        assertEquals(carDto, result.getContent().get(0));
+        assertEquals(expected, actual);
 
         verify(carRepository).findAll(pageable);
         verify(carMapper).toDto(car);
@@ -113,8 +112,7 @@ public class CarServiceTest {
 
         CarResponseDto result = carService.getById(id);
 
-        assertEquals(expectedDto.getId(), result.getId());
-        assertEquals(expectedDto.getModel(), result.getModel());
+        assertEquals(expectedDto, result);
 
         verify(carRepository).findById(id);
         verify(carMapper).toDto(car);

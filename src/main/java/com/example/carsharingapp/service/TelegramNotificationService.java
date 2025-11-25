@@ -38,7 +38,7 @@ public class TelegramNotificationService implements NotificationService {
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(uri, body, String.class);
         } catch (Exception ex) {
-            throw new NotificationSendException("Failed to send telegram notification");
+            throw new NotificationSendException("Failed to send telegram notification",ex);
         }
     }
 

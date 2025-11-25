@@ -59,13 +59,6 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseEntity<Object> createResponse(String message, HttpStatus status) {
-        Map<String, Object> errorResponse = new LinkedHashMap<>();
-        errorResponse.put("timestamp", LocalDateTime.now());
-        errorResponse.put("message", message);
-        return new ResponseEntity<>(errorResponse, status);
-    }
-
     @ExceptionHandler(DataProcessingException.class)
     public ResponseEntity<Object> handleStripePaymentException(DataProcessingException ex) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -85,5 +78,12 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                         "status", HttpStatus.SERVICE_UNAVAILABLE.value()
                 )
         );
+    }
+
+    private ResponseEntity<Object> createResponse(String message, HttpStatus status) {
+        Map<String, Object> errorResponse = new LinkedHashMap<>();
+        errorResponse.put("timestamp", LocalDateTime.now());
+        errorResponse.put("message", message);
+        return new ResponseEntity<>(errorResponse, status);
     }
 }

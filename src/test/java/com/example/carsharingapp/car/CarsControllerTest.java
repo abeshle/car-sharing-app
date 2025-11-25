@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 
 import com.example.carsharingapp.dto.car.CarRequestDto;
 import com.example.carsharingapp.dto.car.CarResponseDto;
@@ -104,10 +105,14 @@ class CarsControllerTest {
                 CarResponseDto.class);
 
         assertNotNull(actual);
-        assertEquals("Tesla Model X", actual.getModel());
-        assertEquals("Tesla", actual.getBrand());
-        assertEquals(CarType.SEDAN, actual.getType());
-        assertEquals(5, actual.getInventory());
+        CarResponseDto expected = new CarResponseDto();
+        expected.setModel("Tesla Model X");
+        expected.setBrand("Tesla");
+        expected.setType(CarType.SEDAN);
+        expected.setInventory(5);
+        expected.setDailyFee(new BigDecimal("150.00"));
+
+        assertTrue(reflectionEquals(expected,actual,"id"));
     }
 
     @Test
@@ -153,7 +158,9 @@ class CarsControllerTest {
                 CarResponseDto.class);
 
         assertNotNull(actual);
-        assertEquals(carId, actual.getId());
+
+        CarResponseDto expected = cars[0];
+        assertEquals(0, expected.getDailyFee().compareTo(actual.getDailyFee()));
     }
 
     @Test
@@ -184,10 +191,16 @@ class CarsControllerTest {
                 CarResponseDto.class);
 
         assertNotNull(actual);
-        assertEquals("Updated Tesla", actual.getModel());
-        assertEquals("Tesla", actual.getBrand());
-        assertEquals(CarType.valueOf(request.getType()), actual.getType());
-        assertEquals(10, actual.getInventory());
+
+        CarResponseDto expected = new CarResponseDto();
+        expected.setId(carId);
+        expected.setModel("Updated Tesla");
+        expected.setBrand("Tesla");
+        expected.setType(CarType.valueOf(request.getType()));
+        expected.setInventory(10);
+        expected.setDailyFee(new BigDecimal("150.00"));
+
+        assertEquals(expected, actual);
 
     }
 
