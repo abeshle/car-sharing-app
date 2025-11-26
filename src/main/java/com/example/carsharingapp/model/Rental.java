@@ -39,6 +39,6 @@ public class Rental {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "active", nullable = false, columnDefinition = "TINYINT(1) default 1")
+    @Column(nullable = false, columnDefinition = "TINYINT(1) default 1")
     private boolean active = true;
 }

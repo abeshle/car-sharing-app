@@ -99,12 +99,22 @@ public class RentalsControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        RentalResponseDto rental = objectMapper.readValue(
+        RentalResponseDto actualRental = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 RentalResponseDto.class);
 
-        assertNotNull(rental);
-        assertEquals(1L, rental.getCarId());
+        assertNotNull(actualRental);
+
+        RentalResponseDto expectedRental = new RentalResponseDto();
+        expectedRental.setId(2L);
+        expectedRental.setUserId(1L);
+        expectedRental.setRentalDate(LocalDate.now());
+        expectedRental.setCarId(1L);
+        expectedRental.setReturnDate(LocalDate.now().plusDays(3));
+        expectedRental.setActive(true);
+
+        assertEquals(expectedRental, actualRental);
+
     }
 
     @Test
@@ -144,13 +154,21 @@ public class RentalsControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        RentalResponseDto rental = objectMapper.readValue(
+        RentalResponseDto expectedRental = new RentalResponseDto();
+        expectedRental.setId(1L);
+        expectedRental.setCarId(1L);
+        expectedRental.setUserId(1L);
+        expectedRental.setRentalDate(LocalDate.of(2025, 11, 12));
+        expectedRental.setReturnDate(LocalDate.of(2025, 11, 15));
+        expectedRental.setActualReturnDate(LocalDate.now());
+        expectedRental.setActive(false);
+
+        RentalResponseDto actualRental = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 RentalResponseDto.class
         );
 
-        assertNotNull(rental);
-        assertEquals(rentalId, rental.getId());
+        assertEquals(expectedRental, actualRental);
     }
 
     @Test
@@ -164,12 +182,22 @@ public class RentalsControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        RentalResponseDto rental = objectMapper.readValue(
+        RentalResponseDto actualRental = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 RentalResponseDto.class
         );
 
-        assertNotNull(rental);
-        assertEquals(rentalId, rental.getId());
+        assertNotNull(actualRental);
+
+        RentalResponseDto expectedRental = new RentalResponseDto();
+        expectedRental.setId(1L);
+        expectedRental.setCarId(1L);
+        expectedRental.setUserId(1L);
+        expectedRental.setRentalDate(LocalDate.of(2025, 11, 12));
+        expectedRental.setReturnDate(LocalDate.of(2025, 11, 15));
+        expectedRental.setActualReturnDate(LocalDate.of(2025, 11, 24));
+        expectedRental.setActive(false);
+
+        assertEquals(expectedRental, actualRental);
     }
 }

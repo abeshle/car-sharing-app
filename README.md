@@ -45,38 +45,53 @@ The application supports two roles:
 
 ---
 
-## 🧩 Data Models
+🗂️ Data Model Diagram (ER Diagram)
+``````
+erDiagram
+    CAR {
+        UUID id PK
+        string model
+        string brand
+        ENUM type "SEDAN | SUV | HATCHBACK | UNIVERSAL"
+        int inventory
+        decimal dailyFee
+    }
 
-### Car
-- model
-- brand
-- type: `SEDAN | SUV | HATCHBACK | UNIVERSAL`
-- inventory
-- dailyFee
+    USER {
+        UUID id PK
+        string email
+        string firstName
+        string lastName
+        string passwordHash
+        ENUM role "CUSTOMER | MANAGER"
+    }
 
-### User
-- email
-- firstName
-- lastName
-- password
-- role: `CUSTOMER | MANAGER`
+    RENTAL {
+        UUID id PK
+        datetime rentalDate
+        datetime returnDate
+        datetime actualReturnDate NULL
+        UUID carId FK
+        UUID userId FK
+        boolean active
+    }
 
-### Rental
-- rentalDate
-- returnDate
-- actualReturnDate
-- carId
-- userId
+    PAYMENT {
+        UUID id PK
+        ENUM status "PENDING | PAID"
+        ENUM type "PAYMENT | FINE"
+        UUID rentalId FK
+        string sessionUrl NULL
+        string sessionId NULL
+        decimal amountToPay
+        datetime createdAt
+    }
 
-### Payment
-- status: `PENDING | PAID`
-- type: `PAYMENT | FINE`
-- rentalId
-- sessionUrl
-- sessionId
-- amountToPay
+    CAR ||--o{ RENTAL : "has many"
+    USER ||--o{ RENTAL : "has many"
+    RENTAL ||--o{ PAYMENT : "has many"
 
----
+``````
 
 ## 🧱 Technologies Used
 
@@ -107,22 +122,26 @@ mapper/ → Entity ↔ DTO mappers
 
 ---
 
-## 🐳 Running the Application with Docker
+## 🔁 How to Clone and Run the Project
+1️⃣ Clone the repository\
+git clone https://github.com/abeshle/car-sharing-app.git \
+cd <repo>
 
-1️⃣ Copy `.env.sample` to `.env` and update values:
+2️⃣ Configure environment variables\
+Copy the example file:\
+cp .env.sample .env\
+Edit .env and provide your values (DB, JWT secret, Stripe keys, Telegram bot token, etc.).
 
-```bash
-cp .env.sample .env
-2️⃣ Start containers:
-docker-compose up --build
-Starts the database
-Starts the Spring Boot app
-Runs Liquibase migrations
-Exposes API at http://localhost:8080/
-🔌 Swagger API Documentation
+3️⃣ Run with Docker\
+docker-compose up --build\
+This will:\
+Start PostgreSQL\
+Start the Spring Boot app\
+Run Liquibase migrations\
+API will be available at:
+http://localhost:8080/ \
+Swagger UI:
 http://localhost:8080/swagger-ui/index.html
-Interactive UI for testing all endpoints.
-```
 ## 📦 Postman Collection
 
 To make API testing easy, this project includes a ready-to-use Postman collection.

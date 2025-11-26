@@ -36,7 +36,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponseDto createPayment(Long rentalId) {
         Rental rental = rentalRepository.findById(rentalId)
-                .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Rental with id " + rentalId + " not found",
+                                new Throwable("Cause: rental not present in the database")
+                        )
+                );
 
         BigDecimal amount = calculateAmount(rental);
 
@@ -44,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             session = stripeService.createPaymentSession(amount, "Car Rental Payment");
         } catch (StripeException e) {
-            throw new PaymentProcessingException("Failed to create Stripe payment session");
+            throw new PaymentProcessingException("Failed to create Stripe payment session",e);
         }
 
         PaymentType type = rental.getReturnDate().isBefore(LocalDate.now())

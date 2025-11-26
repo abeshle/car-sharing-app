@@ -41,7 +41,7 @@ public class Car {
     @Column(nullable = false)
     private BigDecimal dailyFee;
 
-    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT(1) default 0")
+    @Column(nullable = false, columnDefinition = "TINYINT(1) default 0")
     private boolean isDeleted = false;
 
 }

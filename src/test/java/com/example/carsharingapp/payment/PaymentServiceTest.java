@@ -103,7 +103,7 @@ public class PaymentServiceTest {
         PaymentResponseDto result = paymentService.createPayment(1L);
 
         assertNotNull(result);
-        assertEquals(expectedDto.getId(), result.getId());
+        assertEquals(expectedDto, result);
 
         verify(rentalRepository).findById(1L);
         verify(stripeService).createPaymentSession(any(BigDecimal.class), anyString());
@@ -131,7 +131,7 @@ public class PaymentServiceTest {
         PaymentResponseDto result = paymentService.confirmSuccess("sess_123");
 
         assertNotNull(result);
-        assertEquals(PaymentStatus.PAID, payment.getStatus());
+        assertEquals(dto,result);
         verify(notificationService).notifyPaymentSuccess(payment.getId(),
                 rental.getUser().getId(), "Amount: " + payment.getAmount());
         verify(paymentRepository).save(payment);

@@ -181,16 +181,21 @@ public class RentalServiceTest {
         rental.setUser(user);
         rental.setCar(car);
 
-        RentalResponseDto dto = new RentalResponseDto();
-        dto.setId(1L);
+        RentalResponseDto expectedDto = new RentalResponseDto();
+        expectedDto.setId(1L);
+        expectedDto.setCarId(1L);
+        expectedDto.setUserId(1L);
+        expectedDto.setRentalDate(rental.getRentalDate());
+        expectedDto.setReturnDate(rental.getReturnDate());
+        expectedDto.setActive(true);
 
         when(rentalRepository.findById(1L)).thenReturn(Optional.of(rental));
-        when(rentalMapper.toDto(rental)).thenReturn(dto);
+        when(rentalMapper.toDto(rental)).thenReturn(expectedDto);
 
-        RentalResponseDto result = rentalService.getById(1L, 1L);
+        RentalResponseDto actualDto = rentalService.getById(1L, 1L);
 
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
+        assertNotNull(actualDto);
+        assertEquals(expectedDto, actualDto);
         verify(rentalRepository).findById(1L);
     }
 
